@@ -1,12 +1,16 @@
+# docker-compose.yml
+# Postgres opcional para entornos donde no se quiera instalar Postgres local.
+# Las credenciales coinciden con el .env de desarrollo: la app no nota la diferencia
+# al alternar entre Postgres local y este contenedor.
 services:
   postgres:
     image: postgres:16-alpine
     container_name: semillitas-db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: semillitas
-      POSTGRES_PASSWORD: semillitas_dev
-      POSTGRES_DB: semillitas
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: UsrCap123
+      POSTGRES_DB: GameKids
     ports:
       - "5432:5432"
     volumes:
