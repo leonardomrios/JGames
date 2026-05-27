@@ -1,35 +1,52 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
-import { MemoryBoard } from "@/components/game/MemoryBoard";
 import { UserBadge } from "@/components/layout/UserBadge";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 
-const DEMO_SYMBOLS = ["🌟", "🌙", "⛪", "🕊️", "📖", "🙏", "❤️", "🌱"];
-
-export default async function PlayPage() {
+export default async function LevelsPage() {
   const session = await auth();
-  if (!session?.user) {
-    redirect("/login");
-  }
+  if (!session?.user) redirect("/login");
 
-  const level = await db.level.findUnique({ where: { id: "level-demo" } });
-  if (!level) {
-    return (
-      <main className="min-h-screen flex items-center justify-center p-8">
-        <p className="text-xl text-ink/60">
-          No hay nivel demo. Ejecuta <code>pnpm db:seed</code>.
-        </p>
-      </main>
-    );
-  }
+  const levels = await db.level.findMany({
+    where: { active: true },
+    orderBy: [{ order: "asc" }, { difficulty: "asc" }],
+  });
 
   return (
     <main className="min-h-screen flex flex-col items-center p-4 md:p-8 pt-8 relative">
       <UserBadge />
-      <h1 className="font-display text-4xl md:text-5xl font-bold text-primary-dark mb-6">
-        Encuentra las parejas 🌱
+      <h1 className="font-display text-4xl md:text-5xl font-bold text-primary-dark mb-2">
+        Elige un nivel 🌱
       </h1>
-      <MemoryBoard levelId={level.id} symbols={DEMO_SYMBOLS} />
+      <p className="text-ink/60 mb-8">¿Con cuál quieres empezar?</p>
+
+      {levels.length === 0 ? (
+        <p className="text-ink/60">No hay niveles disponibles.</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl w-full">
+          {levels.map((level) => (
+            <Link
+              key={level.id}
+              href={`/play/${level.id}`}
+              className="bg-white hover:bg-secondary/20 active:scale-95 transition-all rounded-3xl p-6 shadow-lg shadow-ink/5 text-center flex flex-col gap-3"
+            >
+              <div className="font-display text-2xl font-bold text-primary-dark">
+                {level.name}
+              </div>
+              <div className="flex justify-center gap-4 text-sm text-ink/60">
+                <span>🎯 {level.pairCount} parejas</span>
+                <span>
+                  {"⭐".repeat(level.difficulty)}
+                  <span className="text-ink/20">
+                    {"⭐".repeat(Math.max(0, 5 - level.difficulty))}
+                  </span>
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
     </main>
   );
 }

@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "assets:placeholders": "tsx scripts/generate-placeholder-assets.ts",
     "db:up": "docker compose up -d postgres",
     "db:down": "docker compose down",
     "db:migrate": "prisma migrate dev",

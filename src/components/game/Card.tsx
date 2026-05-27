@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 
 interface CardProps {
-  symbol: string;
+  imageUrl: string;
   isFlipped: boolean;
   isMatched: boolean;
   onClick: () => void;
@@ -11,7 +11,7 @@ interface CardProps {
 }
 
 export function Card({
-  symbol,
+  imageUrl,
   isFlipped,
   isMatched,
   onClick,
@@ -24,7 +24,7 @@ export function Card({
       onClick={onClick}
       disabled={disabled || isMatched}
       className="relative aspect-square w-full [perspective:1000px] disabled:cursor-default cursor-pointer"
-      aria-label={showFront ? `Carta ${symbol}` : "Carta volteada"}
+      aria-label={showFront ? "Carta descubierta" : "Carta volteada"}
     >
       <motion.div
         className="relative w-full h-full [transform-style:preserve-3d]"
@@ -36,13 +36,17 @@ export function Card({
         </div>
 
         <div
-          className={`absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-2xl shadow-lg flex items-center justify-center transition-colors ${
-            isMatched
-              ? "bg-success/20 shadow-success/30"
-              : "bg-white shadow-ink/10"
+          className={`absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-2xl shadow-lg flex items-center justify-center p-2 transition-colors ${
+            isMatched ? "bg-success/20 shadow-success/30" : "bg-white shadow-ink/10"
           }`}
         >
-          <span className="text-5xl md:text-6xl">{symbol}</span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={imageUrl}
+            alt=""
+            draggable={false}
+            className="w-full h-full object-contain select-none pointer-events-none"
+          />
         </div>
       </motion.div>
     </button>

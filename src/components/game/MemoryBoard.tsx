@@ -8,12 +8,12 @@ import { ResultModal } from "./ResultModal";
 
 interface MemoryBoardProps {
   levelId: string;
-  symbols: string[];
+  imageUrls: string[];
 }
 
 interface BoardCard {
   id: number;
-  symbol: string;
+  imageUrl: string;
   isFlipped: boolean;
   isMatched: boolean;
 }
@@ -27,17 +27,24 @@ function shuffle<T>(arr: T[]): T[] {
   return out;
 }
 
-function buildDeck(symbols: string[]): BoardCard[] {
-  const pairs = symbols.flatMap((s, idx) => [
-    { id: idx * 2, symbol: s, isFlipped: false, isMatched: false },
-    { id: idx * 2 + 1, symbol: s, isFlipped: false, isMatched: false },
+function buildDeck(urls: string[]): BoardCard[] {
+  const pairs = urls.flatMap((url, idx) => [
+    { id: idx * 2, imageUrl: url, isFlipped: false, isMatched: false },
+    { id: idx * 2 + 1, imageUrl: url, isFlipped: false, isMatched: false },
   ]);
   return shuffle(pairs);
 }
 
-export function MemoryBoard({ levelId, symbols }: MemoryBoardProps) {
+function gridColumnsClass(totalCards: number): string {
+  if (totalCards <= 12) return "grid-cols-3 sm:grid-cols-4";
+  if (totalCards <= 16) return "grid-cols-4";
+  if (totalCards <= 20) return "grid-cols-4 sm:grid-cols-5";
+  return "grid-cols-4 sm:grid-cols-6";
+}
+
+export function MemoryBoard({ levelId, imageUrls }: MemoryBoardProps) {
   const router = useRouter();
-  const [cards, setCards] = useState<BoardCard[]>(() => buildDeck(symbols));
+  const [cards, setCards] = useState<BoardCard[]>(() => buildDeck(imageUrls));
   const [selected, setSelected] = useState<number[]>([]);
   const [attempts, setAttempts] = useState(0);
   const [matches, setMatches] = useState(0);
@@ -51,14 +58,16 @@ export function MemoryBoard({ levelId, symbols }: MemoryBoardProps) {
 
   useEffect(() => {
     if (finished) return;
+
     const interval = setInterval(() => {
       setElapsedMs(Date.now() - startTimeRef.current);
     }, 250);
+
     return () => clearInterval(interval);
   }, [finished]);
 
   useEffect(() => {
-    if (matches === symbols.length && !savedRef.current) {
+    if (matches === imageUrls.length && !savedRef.current) {
       savedRef.current = true;
       const duration = Date.now() - startTimeRef.current;
       setFinished(true);
@@ -71,54 +80,58 @@ export function MemoryBoard({ levelId, symbols }: MemoryBoardProps) {
         matches,
         mistakes,
       }).then((res) => {
-        if (res.ok) setFinalScore(res.score);
+        if (res.ok) {
+          setFinalScore(res.score);
+        }
       });
     }
-  }, [matches, symbols.length, levelId, attempts, mistakes]);
+  }, [matches, imageUrls.length, levelId, attempts, mistakes]);
 
   const handleCardClick = useCallback(
     (cardId: number) => {
       if (locked) return;
       if (selected.includes(cardId)) return;
 
-      const card = cards.find((c) => c.id === cardId);
+      const card = cards.find((current) => current.id === cardId);
       if (!card || card.isMatched) return;
 
       const newSelected = [...selected, cardId];
       setCards((prev) =>
-        prev.map((c) => (c.id === cardId ? { ...c, isFlipped: true } : c))
+        prev.map((current) =>
+          current.id === cardId ? { ...current, isFlipped: true } : current
+        )
       );
       setSelected(newSelected);
 
       if (newSelected.length === 2) {
-        setAttempts((a) => a + 1);
+        setAttempts((current) => current + 1);
         setLocked(true);
 
         const [firstId, secondId] = newSelected;
-        const first = cards.find((c) => c.id === firstId)!;
-        const second = cards.find((c) => c.id === secondId)!;
+        const first = cards.find((current) => current.id === firstId)!;
+        const second = cards.find((current) => current.id === secondId)!;
 
-        if (first.symbol === second.symbol) {
+        if (first.imageUrl === second.imageUrl) {
           setTimeout(() => {
             setCards((prev) =>
-              prev.map((c) =>
-                c.id === firstId || c.id === secondId
-                  ? { ...c, isMatched: true, isFlipped: false }
-                  : c
+              prev.map((current) =>
+                current.id === firstId || current.id === secondId
+                  ? { ...current, isMatched: true, isFlipped: false }
+                  : current
               )
             );
-            setMatches((m) => m + 1);
+            setMatches((current) => current + 1);
             setSelected([]);
             setLocked(false);
           }, 600);
         } else {
-          setMistakes((m) => m + 1);
+          setMistakes((current) => current + 1);
           setTimeout(() => {
             setCards((prev) =>
-              prev.map((c) =>
-                c.id === firstId || c.id === secondId
-                  ? { ...c, isFlipped: false }
-                  : c
+              prev.map((current) =>
+                current.id === firstId || current.id === secondId
+                  ? { ...current, isFlipped: false }
+                  : current
               )
             );
             setSelected([]);
@@ -131,7 +144,7 @@ export function MemoryBoard({ levelId, symbols }: MemoryBoardProps) {
   );
 
   const handlePlayAgain = () => {
-    setCards(buildDeck(symbols));
+    setCards(buildDeck(imageUrls));
     setSelected([]);
     setAttempts(0);
     setMatches(0);
@@ -144,25 +157,26 @@ export function MemoryBoard({ levelId, symbols }: MemoryBoardProps) {
     savedRef.current = false;
   };
 
-  const handleExit = () => router.push("/");
+  const handleExit = () => router.push("/play");
 
   const totalSec = Math.floor(elapsedMs / 1000);
   const m = Math.floor(totalSec / 60);
   const s = totalSec % 60;
+  const gridCols = gridColumnsClass(cards.length);
 
   return (
     <>
       <div className="flex justify-between items-center w-full max-w-2xl mb-6 px-2">
         <Stat icon="⏱️" value={`${m}:${s.toString().padStart(2, "0")}`} />
-        <Stat icon="✨" value={`${matches}/${symbols.length}`} />
+        <Stat icon="✨" value={`${matches}/${imageUrls.length}`} />
         <Stat icon="🎯" value={attempts.toString()} />
       </div>
 
-      <div className="grid grid-cols-4 gap-3 md:gap-4 w-full max-w-2xl">
+      <div className={`grid ${gridCols} gap-3 md:gap-4 w-full max-w-3xl`}>
         {cards.map((card) => (
           <Card
             key={card.id}
-            symbol={card.symbol}
+            imageUrl={card.imageUrl}
             isFlipped={card.isFlipped}
             isMatched={card.isMatched}
             onClick={() => handleCardClick(card.id)}
