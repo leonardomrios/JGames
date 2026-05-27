@@ -8,7 +8,6 @@ interface CardProps {
   isFlipped: boolean;
   isMatched: boolean;
   onClick: () => void;
-  onZoom: () => void;
   disabled: boolean;
 }
 
@@ -18,27 +17,15 @@ export function Card({
   isFlipped,
   isMatched,
   onClick,
-  onZoom,
   disabled,
 }: CardProps) {
   const showFront = isFlipped || isMatched;
 
-  function handleClick() {
-    if (isMatched) {
-      onZoom();
-      return;
-    }
-
-    if (disabled) return;
-    onClick();
-  }
-
   return (
     <button
-      onClick={handleClick}
-      className={`relative aspect-square w-full [perspective:1000px] ${
-        isMatched ? "cursor-zoom-in" : disabled ? "cursor-default" : "cursor-pointer"
-      }`}
+      onClick={onClick}
+      disabled={disabled || isMatched}
+      className="relative aspect-square w-full [perspective:1000px] disabled:cursor-default cursor-pointer"
       aria-label={showFront ? `Carta ${number} descubierta` : `Carta ${number}`}
     >
       <motion.div
@@ -46,14 +33,14 @@ export function Card({
         animate={{ rotateY: showFront ? 180 : 0 }}
         transition={{ duration: 0.4, type: "spring", stiffness: 200, damping: 20 }}
       >
-        <div className="absolute inset-0 [backface-visibility:hidden] rounded-2xl bg-primary shadow-lg shadow-primary/30 flex items-center justify-center">
-          <span className="font-display text-4xl md:text-5xl font-bold text-white/90">
+        <div className="absolute inset-0 [backface-visibility:hidden] rounded-xl bg-primary shadow-md shadow-primary/30 flex items-center justify-center">
+          <span className="font-display text-2xl md:text-3xl font-bold text-white/90">
             {number}
           </span>
         </div>
 
         <div
-          className={`absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-2xl shadow-lg flex items-center justify-center p-2 transition-colors ${
+          className={`absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-xl shadow-md flex items-center justify-center p-1 transition-colors ${
             isMatched ? "bg-success/20 shadow-success/30" : "bg-white shadow-ink/10"
           }`}
         >
