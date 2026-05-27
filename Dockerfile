@@ -3,7 +3,7 @@ RUN corepack enable
 
 FROM base AS deps
 WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml .npmrc ./
 RUN pnpm install --frozen-lockfile
 
 FROM base AS builder
@@ -28,6 +28,7 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/public/levels-seed ./public/levels-seed
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/node_modules/.bin ./node_modules/.bin
 COPY docker-entrypoint.sh ./
 RUN chmod +x docker-entrypoint.sh
