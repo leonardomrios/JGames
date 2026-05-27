@@ -41,3 +41,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# agent / IDE artifacts
+.claude/
+.edge-profile-*/
+.fase*-dev.log
+.fase*-dev.err.log

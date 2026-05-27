@@ -1,5 +1,23 @@
 @import "tailwindcss";
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
+@theme {
+  --color-primary: #4FC3F7;
+  --color-primary-dark: #29B6F6;
+  --color-secondary: #FFD54F;
+  --color-accent: #FF8A65;
+  --color-success: #66BB6A;
+  --color-warning: #FFB74D;
+  --color-ink: #1A3A5C;
+  --color-cream: #FFF8E7;
+
+  --font-display: var(--font-fredoka), system-ui, sans-serif;
+  --font-body: var(--font-nunito), system-ui, sans-serif;
 }
+
+html, body {
+  background-color: var(--color-cream);
+  color: var(--color-ink);
+}
+
+.font-display { font-family: var(--font-display); }
+.font-body    { font-family: var(--font-body); }
