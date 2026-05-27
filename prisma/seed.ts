@@ -69,6 +69,14 @@ const LEVELS: LevelSeed[] = [
     pairCount: 0,
     themeFolder: "personalizado-2",
   },
+  {
+    id: "level-27-mayo",
+    name: "27 de Mayo",
+    order: 12,
+    difficulty: 2,
+    pairCount: 8,
+    themeFolder: "27-de-mayo",
+  },
 ];
 
 async function main() {
