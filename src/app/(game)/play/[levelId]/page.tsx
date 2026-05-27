@@ -23,7 +23,9 @@ export default async function PlayLevelPage({ params }: PageProps) {
   if (!assets.ok) {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center p-8 gap-4 relative">
-        <UserBadge />
+        <div className="absolute top-4 right-4 z-10">
+          <UserBadge />
+        </div>
         <h1 className="font-display text-3xl text-warning">
           ⚠️ Error al cargar el nivel
         </h1>
@@ -40,7 +42,9 @@ export default async function PlayLevelPage({ params }: PageProps) {
 
   return (
     <main className="min-h-screen flex flex-col items-center p-4 md:p-8 pt-6 relative">
-      <UserBadge />
+      <div className="absolute top-4 right-4 z-10">
+        <UserBadge />
+      </div>
       <Link
         href="/play"
         className="self-start font-display text-ink/60 hover:text-ink mb-2"

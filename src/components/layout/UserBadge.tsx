@@ -11,7 +11,7 @@ export function UserBadge() {
   const icon = session.user.role === "CHILD" ? "🧒" : "👩‍🏫";
 
   return (
-    <div className="absolute top-4 right-4 flex items-center gap-3 bg-white/80 backdrop-blur rounded-2xl px-4 py-2 shadow-sm">
+    <div className="flex items-center gap-3 bg-white/80 backdrop-blur rounded-2xl px-4 py-2 shadow-sm">
       <span className="font-display text-ink">
         {icon} {session.user.name}
       </span>

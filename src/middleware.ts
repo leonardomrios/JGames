@@ -19,6 +19,11 @@ export default auth((req) => {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
+  const role = req.auth.user.role;
+  if (path.startsWith("/teacher") && role !== "TEACHER" && role !== "ADMIN") {
+    return NextResponse.redirect(new URL("/play", req.url));
+  }
+
   return NextResponse.next();
 });
 

@@ -30,7 +30,7 @@ export default function TeacherLoginPage() {
       return;
     }
 
-    router.push("/play");
+    router.push("/teacher/dashboard");
     router.refresh();
   }
 

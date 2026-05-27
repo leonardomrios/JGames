@@ -15,7 +15,9 @@ export default async function LevelsPage() {
 
   return (
     <main className="min-h-screen flex flex-col items-center p-4 md:p-8 pt-8 relative">
-      <UserBadge />
+      <div className="absolute top-4 right-4 z-10">
+        <UserBadge />
+      </div>
       <h1 className="font-display text-4xl md:text-5xl font-bold text-primary-dark mb-2">
         Elige un nivel 🌱
       </h1>
