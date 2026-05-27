@@ -15,7 +15,7 @@ con niveles configurables y dashboard de progreso para profesores.
 
 - Node 20 LTS o superior
 - pnpm
-- PostgreSQL 16 local (o Docker — ver más abajo)
+- PostgreSQL 16 local (o Docker, ver más abajo)
 
 ## Arranque local (modo desarrollo)
 
@@ -57,7 +57,7 @@ contenedor con `pnpm db:up`. La app se conecta sin cambios.
 
 ## Estructura del proyecto
 
-```
+```text
 src/
 ├── app/
 │   ├── (auth)/      # login (niños y profesores)
@@ -77,4 +77,59 @@ public/
 ## Estado del desarrollo
 
 Fase 0 completa: esqueleto Next.js + Prisma + Postgres operativo.
-Próximas fases: MVP jugable → autenticación real → dashboard → admin.
+Próximas fases: MVP jugable -> autenticación real -> dashboard -> admin.
+
+## Despliegue en producción (Docker)
+
+### Requisitos del servidor
+
+- Ubuntu 22.04 (o similar)
+- Docker Engine 24+
+- Docker Compose v2
+- 2 vCPU / 2 GB RAM mínimo
+
+### Pasos
+
+1. Clonar/copiar el proyecto al servidor:
+   ```
+   git clone <url-del-repo> semillitas
+   cd semillitas
+   ```
+
+2. Crear archivo de configuración:
+   ```
+   cp .env.production.example .env.production
+   nano .env.production
+   ```
+   Completar `AUTH_SECRET` (generar con `openssl rand -base64 32`) y `POSTGRES_PASSWORD`.
+
+3. Desplegar:
+   ```
+   bash scripts/deploy.sh
+   ```
+
+4. Seed inicial (solo la primera vez):
+   ```
+   docker compose -f docker-compose.production.yml exec app npx prisma db seed
+   ```
+
+5. La app estará disponible en `http://<ip-del-servidor>`.
+
+### HTTPS (opcional, requiere dominio)
+
+Para habilitar HTTPS con Let's Encrypt, instalar Certbot en el host:
+```
+sudo apt install certbot
+sudo certbot certonly --standalone -d tu-dominio.com
+```
+Luego actualizar `nginx/default.conf` con la configuración SSL y los paths
+a los certificados, y añadir el puerto 443 en `docker-compose.production.yml`.
+
+### Comandos útiles
+
+| Comando | Acción |
+|---|---|
+| `docker compose -f docker-compose.production.yml logs -f` | Ver logs en vivo |
+| `docker compose -f docker-compose.production.yml restart app` | Reiniciar la app |
+| `docker compose -f docker-compose.production.yml down` | Detener todo |
+| `docker compose -f docker-compose.production.yml exec app npx prisma studio` | Prisma Studio en prod |
