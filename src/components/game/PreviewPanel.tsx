@@ -15,7 +15,7 @@ export function PreviewPanel({
 }: PreviewPanelProps) {
   return (
     <div
-      className={`flex-1 rounded-3xl border-2 overflow-hidden flex items-center justify-center h-[160px] md:h-[250px] lg:h-[300px] transition-colors ${
+      className={`flex-1 rounded-3xl border-2 overflow-hidden flex items-center justify-center h-[220px] md:h-[300px] lg:h-[360px] transition-colors ${
         isMatch
           ? "bg-success/10 border-success/40"
           : imageUrl
