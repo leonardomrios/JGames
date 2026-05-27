@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: semillitas-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: semillitas
+      POSTGRES_PASSWORD: semillitas_dev
+      POSTGRES_DB: semillitas
+    ports:
+      - "5432:5432"
+    volumes:
+      - semillitas_pgdata:/var/lib/postgresql/data
+
+volumes:
+  semillitas_pgdata:
