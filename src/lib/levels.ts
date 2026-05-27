@@ -121,15 +121,16 @@ export async function loadLevelAssets(
 
   const mode = detectMode(files);
   const allPairs = mode === "ab" ? buildPairsAB(files) : buildPairsSimple(files);
+  const effectiveCount = pairCount > 0 ? pairCount : allPairs.length;
 
-  if (allPairs.length < pairCount) {
+  if (allPairs.length < effectiveCount) {
     return {
       ok: false,
-      error: `El nivel necesita ${pairCount} parejas pero solo hay ${allPairs.length} en ${themeFolder}`,
+      error: `El nivel necesita ${effectiveCount} parejas pero solo hay ${allPairs.length} en ${themeFolder}`,
     };
   }
 
-  const selected = shuffle(allPairs).slice(0, pairCount);
+  const selected = shuffle(allPairs).slice(0, effectiveCount);
   const pairsWithUrls: LevelPair[] = selected.map((pair) => ({
     pairId: pair.pairId,
     cards: [

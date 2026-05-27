@@ -3,28 +3,43 @@
 import { motion } from "framer-motion";
 
 interface CardProps {
+  number: number;
   imageUrl: string;
   isFlipped: boolean;
   isMatched: boolean;
   onClick: () => void;
+  onZoom: () => void;
   disabled: boolean;
 }
 
 export function Card({
+  number,
   imageUrl,
   isFlipped,
   isMatched,
   onClick,
+  onZoom,
   disabled,
 }: CardProps) {
   const showFront = isFlipped || isMatched;
 
+  function handleClick() {
+    if (isMatched) {
+      onZoom();
+      return;
+    }
+
+    if (disabled) return;
+    onClick();
+  }
+
   return (
     <button
-      onClick={onClick}
-      disabled={disabled || isMatched}
-      className="relative aspect-square w-full [perspective:1000px] disabled:cursor-default cursor-pointer"
-      aria-label={showFront ? "Carta descubierta" : "Carta volteada"}
+      onClick={handleClick}
+      className={`relative aspect-square w-full [perspective:1000px] ${
+        isMatched ? "cursor-zoom-in" : disabled ? "cursor-default" : "cursor-pointer"
+      }`}
+      aria-label={showFront ? `Carta ${number} descubierta` : `Carta ${number}`}
     >
       <motion.div
         className="relative w-full h-full [transform-style:preserve-3d]"
@@ -32,7 +47,9 @@ export function Card({
         transition={{ duration: 0.4, type: "spring", stiffness: 200, damping: 20 }}
       >
         <div className="absolute inset-0 [backface-visibility:hidden] rounded-2xl bg-primary shadow-lg shadow-primary/30 flex items-center justify-center">
-          <span className="font-display text-4xl md:text-5xl text-white">🌱</span>
+          <span className="font-display text-4xl md:text-5xl font-bold text-white/90">
+            {number}
+          </span>
         </div>
 
         <div

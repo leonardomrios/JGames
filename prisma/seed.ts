@@ -58,7 +58,7 @@ const LEVELS: LevelSeed[] = [
     name: "Personalizado 1 — Emociones",
     order: 10,
     difficulty: 2,
-    pairCount: 8,
+    pairCount: 0,
     themeFolder: "personalizado-1",
   },
   {
@@ -66,7 +66,7 @@ const LEVELS: LevelSeed[] = [
     name: "Personalizado 2 — Emociones e historias",
     order: 11,
     difficulty: 3,
-    pairCount: 8,
+    pairCount: 0,
     themeFolder: "personalizado-2",
   },
 ];

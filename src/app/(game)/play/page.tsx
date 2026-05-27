@@ -35,7 +35,9 @@ export default async function LevelsPage() {
                 {level.name}
               </div>
               <div className="flex justify-center gap-4 text-sm text-ink/60">
-                <span>🎯 {level.pairCount} parejas</span>
+                <span>
+                  🎯 {level.pairCount > 0 ? `${level.pairCount} parejas` : "Todas las parejas"}
+                </span>
                 <span>
                   {"⭐".repeat(level.difficulty)}
                   <span className="text-ink/20">

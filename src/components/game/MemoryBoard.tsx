@@ -6,6 +6,7 @@ import { saveGameSession } from "@/server/actions/game";
 import type { LevelPair } from "@/lib/levels";
 import { Card } from "./Card";
 import { ResultModal } from "./ResultModal";
+import { ZoomModal } from "./ZoomModal";
 
 interface MemoryBoardProps {
   levelId: string;
@@ -68,6 +69,7 @@ export function MemoryBoard({ levelId, pairs }: MemoryBoardProps) {
   const [elapsedMs, setElapsedMs] = useState(0);
   const [finished, setFinished] = useState(false);
   const [finalScore, setFinalScore] = useState<number | undefined>(undefined);
+  const [zoomedUrl, setZoomedUrl] = useState<string | null>(null);
   const startTimeRef = useRef<number>(Date.now());
   const savedRef = useRef(false);
 
@@ -168,6 +170,7 @@ export function MemoryBoard({ levelId, pairs }: MemoryBoardProps) {
     setElapsedMs(0);
     setFinished(false);
     setFinalScore(undefined);
+    setZoomedUrl(null);
     startTimeRef.current = Date.now();
     savedRef.current = false;
   };
@@ -188,13 +191,15 @@ export function MemoryBoard({ levelId, pairs }: MemoryBoardProps) {
       </div>
 
       <div className={`grid ${gridCols} gap-3 md:gap-4 w-full max-w-3xl`}>
-        {cards.map((card) => (
+        {cards.map((card, index) => (
           <Card
             key={card.id}
+            number={index + 1}
             imageUrl={card.imageUrl}
             isFlipped={card.isFlipped}
             isMatched={card.isMatched}
             onClick={() => handleCardClick(card.id)}
+            onZoom={() => setZoomedUrl(card.imageUrl)}
             disabled={locked}
           />
         ))}
@@ -209,6 +214,8 @@ export function MemoryBoard({ levelId, pairs }: MemoryBoardProps) {
         onPlayAgain={handlePlayAgain}
         onExit={handleExit}
       />
+
+      <ZoomModal imageUrl={zoomedUrl} onClose={() => setZoomedUrl(null)} />
     </>
   );
 }
