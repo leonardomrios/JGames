@@ -3,16 +3,18 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { saveGameSession } from "@/server/actions/game";
+import type { LevelPair } from "@/lib/levels";
 import { Card } from "./Card";
 import { ResultModal } from "./ResultModal";
 
 interface MemoryBoardProps {
   levelId: string;
-  imageUrls: string[];
+  pairs: LevelPair[];
 }
 
 interface BoardCard {
   id: number;
+  pairId: string;
   imageUrl: string;
   isFlipped: boolean;
   isMatched: boolean;
@@ -27,12 +29,25 @@ function shuffle<T>(arr: T[]): T[] {
   return out;
 }
 
-function buildDeck(urls: string[]): BoardCard[] {
-  const pairs = urls.flatMap((url, idx) => [
-    { id: idx * 2, imageUrl: url, isFlipped: false, isMatched: false },
-    { id: idx * 2 + 1, imageUrl: url, isFlipped: false, isMatched: false },
+function buildDeck(pairs: LevelPair[]): BoardCard[] {
+  const cards = pairs.flatMap((pair, idx) => [
+    {
+      id: idx * 2,
+      pairId: pair.pairId,
+      imageUrl: pair.cards[0],
+      isFlipped: false,
+      isMatched: false,
+    },
+    {
+      id: idx * 2 + 1,
+      pairId: pair.pairId,
+      imageUrl: pair.cards[1],
+      isFlipped: false,
+      isMatched: false,
+    },
   ]);
-  return shuffle(pairs);
+
+  return shuffle(cards);
 }
 
 function gridColumnsClass(totalCards: number): string {
@@ -42,9 +57,9 @@ function gridColumnsClass(totalCards: number): string {
   return "grid-cols-4 sm:grid-cols-6";
 }
 
-export function MemoryBoard({ levelId, imageUrls }: MemoryBoardProps) {
+export function MemoryBoard({ levelId, pairs }: MemoryBoardProps) {
   const router = useRouter();
-  const [cards, setCards] = useState<BoardCard[]>(() => buildDeck(imageUrls));
+  const [cards, setCards] = useState<BoardCard[]>(() => buildDeck(pairs));
   const [selected, setSelected] = useState<number[]>([]);
   const [attempts, setAttempts] = useState(0);
   const [matches, setMatches] = useState(0);
@@ -67,7 +82,7 @@ export function MemoryBoard({ levelId, imageUrls }: MemoryBoardProps) {
   }, [finished]);
 
   useEffect(() => {
-    if (matches === imageUrls.length && !savedRef.current) {
+    if (matches === pairs.length && !savedRef.current) {
       savedRef.current = true;
       const duration = Date.now() - startTimeRef.current;
       setFinished(true);
@@ -85,7 +100,7 @@ export function MemoryBoard({ levelId, imageUrls }: MemoryBoardProps) {
         }
       });
     }
-  }, [matches, imageUrls.length, levelId, attempts, mistakes]);
+  }, [matches, pairs.length, levelId, attempts, mistakes]);
 
   const handleCardClick = useCallback(
     (cardId: number) => {
@@ -111,7 +126,7 @@ export function MemoryBoard({ levelId, imageUrls }: MemoryBoardProps) {
         const first = cards.find((current) => current.id === firstId)!;
         const second = cards.find((current) => current.id === secondId)!;
 
-        if (first.imageUrl === second.imageUrl) {
+        if (first.pairId === second.pairId) {
           setTimeout(() => {
             setCards((prev) =>
               prev.map((current) =>
@@ -144,7 +159,7 @@ export function MemoryBoard({ levelId, imageUrls }: MemoryBoardProps) {
   );
 
   const handlePlayAgain = () => {
-    setCards(buildDeck(imageUrls));
+    setCards(buildDeck(pairs));
     setSelected([]);
     setAttempts(0);
     setMatches(0);
@@ -168,7 +183,7 @@ export function MemoryBoard({ levelId, imageUrls }: MemoryBoardProps) {
     <>
       <div className="flex justify-between items-center w-full max-w-2xl mb-6 px-2">
         <Stat icon="⏱️" value={`${m}:${s.toString().padStart(2, "0")}`} />
-        <Stat icon="✨" value={`${matches}/${imageUrls.length}`} />
+        <Stat icon="✨" value={`${matches}/${pairs.length}`} />
         <Stat icon="🎯" value={attempts.toString()} />
       </div>
 

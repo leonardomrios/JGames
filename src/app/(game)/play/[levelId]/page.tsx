@@ -50,7 +50,7 @@ export default async function PlayLevelPage({ params }: PageProps) {
       <h1 className="font-display text-3xl md:text-4xl font-bold text-primary-dark mb-6 text-center">
         {level.name}
       </h1>
-      <MemoryBoard levelId={level.id} imageUrls={assets.urls} />
+      <MemoryBoard levelId={level.id} pairs={assets.pairs} />
     </main>
   );
 }

@@ -53,6 +53,22 @@ const LEVELS: LevelSeed[] = [
     pairCount: 12,
     themeFolder: "biblicos/arca-noe",
   },
+  {
+    id: "level-personalizado-1",
+    name: "Personalizado 1 — Emociones",
+    order: 10,
+    difficulty: 2,
+    pairCount: 8,
+    themeFolder: "personalizado-1",
+  },
+  {
+    id: "level-personalizado-2",
+    name: "Personalizado 2 — Emociones e historias",
+    order: 11,
+    difficulty: 3,
+    pairCount: 8,
+    themeFolder: "personalizado-2",
+  },
 ];
 
 async function main() {
