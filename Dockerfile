@@ -8,7 +8,7 @@ RUN pnpm install --frozen-lockfile
 
 FROM base AS builder
 WORKDIR /app
-ENV DATABASE_URL=postgresql://semillitas:semillitas@localhost:5432/semillitas
+ENV DATABASE_URL=postgresql://gamekids_user:placeholder@localhost:5432/gamekids
 ENV AUTH_SECRET=build-time-placeholder
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .

@@ -133,3 +133,23 @@ a los certificados, y añadir el puerto 443 en `docker-compose.production.yml`.
 | `docker compose -f docker-compose.production.yml restart app` | Reiniciar la app |
 | `docker compose -f docker-compose.production.yml down` | Detener todo |
 | `docker compose -f docker-compose.production.yml exec app npx prisma studio` | Prisma Studio en prod |
+
+## Deploy en VPS con infraestructura compartida
+
+Para un VPS donde Nginx y Postgres ya existen fuera de Docker, el archivo
+`docker-compose.production.yml` queda reducido solo al servicio `app`.
+
+- Postgres es externo al compose y corre nativo en el VPS.
+- Nginx es externo al compose, termina HTTPS y hace reverse proxy hacia la app.
+- La app expone unicamente `127.0.0.1:3100` y escucha internamente en `3000`.
+- Se mantiene el volumen `semillitas_levels` para persistir `/app/public/levels`.
+
+Variables necesarias en `.env.production`:
+
+- `AUTH_SECRET`
+- `POSTGRES_PASSWORD`
+
+`POSTGRES_PASSWORD` debe coincidir con la password real del usuario
+`gamekids_user` en el Postgres del VPS. La `DATABASE_URL` final se construye
+automaticamente en `docker-compose.production.yml` apuntando al host mediante
+`host.docker.internal`.

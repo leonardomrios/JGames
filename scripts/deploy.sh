@@ -20,6 +20,6 @@ docker compose -f docker-compose.production.yml up -d
 
 echo ""
 echo "Deploy completado"
-echo "  App: http://$(hostname -I | awk '{print $1}')"
+echo "  App: https://juegos.datacense.tech (configurado via Nginx del host)"
 echo "  Para ver logs: docker compose -f docker-compose.production.yml logs -f app"
-echo "  Para seed inicial: docker compose -f docker-compose.production.yml exec app npx prisma db seed"
+echo "  Seed inicial (solo primer deploy, si aplica): docker compose -f docker-compose.production.yml exec app npx prisma db seed"
