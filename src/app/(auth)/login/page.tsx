@@ -1,24 +1,40 @@
-import { loginAsDemo } from "@/server/actions/auth-demo";
+import Link from "next/link";
 
 export default function LoginPage() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-8 gap-10">
-      <h1 className="font-display text-5xl md:text-6xl font-bold text-primary-dark">
-        ¡Bienvenido!
+      <h1 className="font-display text-5xl md:text-6xl font-bold text-primary-dark text-center">
+        ¿Quién eres?
       </h1>
-      <p className="text-xl text-ink/70 text-center max-w-md">
-        En esta versión de prueba puedes jugar como invitado demo. Pronto
-        añadiremos cuentas para aulas reales.
-      </p>
 
-      <form action={loginAsDemo}>
-        <button
-          type="submit"
-          className="font-display text-2xl md:text-3xl bg-primary hover:bg-primary-dark active:scale-95 transition-all text-white px-10 py-5 rounded-3xl shadow-xl shadow-primary/30"
+      <div className="flex flex-col md:flex-row gap-6 w-full max-w-2xl">
+        <Link
+          href="/login/child"
+          className="flex-1 bg-primary hover:bg-primary-dark active:scale-95 transition-all rounded-3xl p-10 shadow-xl shadow-primary/30 text-center"
         >
-          🚀 JUGAR COMO DEMO
-        </button>
-      </form>
+          <div className="text-7xl mb-4">🧒</div>
+          <div className="font-display text-3xl font-bold text-white">
+            Soy un niño
+          </div>
+        </Link>
+
+        <Link
+          href="/login/teacher"
+          className="flex-1 bg-accent hover:bg-accent/90 active:scale-95 transition-all rounded-3xl p-10 shadow-xl shadow-accent/30 text-center"
+        >
+          <div className="text-7xl mb-4">👩‍🏫</div>
+          <div className="font-display text-3xl font-bold text-white">
+            Soy profesor
+          </div>
+        </Link>
+      </div>
+
+      <Link
+        href="/"
+        className="text-ink/50 hover:text-ink transition-colors mt-4"
+      >
+        ← Volver al inicio
+      </Link>
     </main>
   );
 }

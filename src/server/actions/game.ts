@@ -1,7 +1,7 @@
 "use server";
 
+import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { getCurrentUserId } from "./auth-demo";
 
 export interface SaveGameInput {
   levelId: string;
@@ -12,8 +12,8 @@ export interface SaveGameInput {
 }
 
 export async function saveGameSession(input: SaveGameInput) {
-  const userId = await getCurrentUserId();
-  if (!userId) {
+  const session = await auth();
+  if (!session?.user?.id) {
     return { ok: false, error: "No autenticado" as const };
   }
 
@@ -22,9 +22,9 @@ export async function saveGameSession(input: SaveGameInput) {
     input.matches * 100 - input.mistakes * 10 - Math.floor(input.durationMs / 1000)
   );
 
-  const session = await db.gameSession.create({
+  const created = await db.gameSession.create({
     data: {
-      userId,
+      userId: session.user.id,
       levelId: input.levelId,
       startedAt: new Date(Date.now() - input.durationMs),
       endedAt: new Date(),
@@ -37,5 +37,5 @@ export async function saveGameSession(input: SaveGameInput) {
     },
   });
 
-  return { ok: true, sessionId: session.id, score };
+  return { ok: true, sessionId: created.id, score };
 }

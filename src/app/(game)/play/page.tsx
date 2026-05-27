@@ -1,13 +1,16 @@
 import { redirect } from "next/navigation";
-import { getCurrentUserId } from "@/server/actions/auth-demo";
-import { db } from "@/lib/db";
 import { MemoryBoard } from "@/components/game/MemoryBoard";
+import { UserBadge } from "@/components/layout/UserBadge";
+import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
 
 const DEMO_SYMBOLS = ["🌟", "🌙", "⛪", "🕊️", "📖", "🙏", "❤️", "🌱"];
 
 export default async function PlayPage() {
-  const userId = await getCurrentUserId();
-  if (!userId) redirect("/login");
+  const session = await auth();
+  if (!session?.user) {
+    redirect("/login");
+  }
 
   const level = await db.level.findUnique({ where: { id: "level-demo" } });
   if (!level) {
@@ -21,7 +24,8 @@ export default async function PlayPage() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center p-4 md:p-8 pt-8">
+    <main className="min-h-screen flex flex-col items-center p-4 md:p-8 pt-8 relative">
+      <UserBadge />
       <h1 className="font-display text-4xl md:text-5xl font-bold text-primary-dark mb-6">
         Encuentra las parejas 🌱
       </h1>

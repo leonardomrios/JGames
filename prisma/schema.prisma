@@ -14,14 +14,31 @@ enum Role {
 }
 
 model User {
-  id           String        @id @default(cuid())
-  role         Role          @default(CHILD)
-  displayName  String
-  pinHash      String?
-  passwordHash String?
-  email        String?       @unique
-  createdAt    DateTime      @default(now())
-  sessions     GameSession[]
+  id               String        @id @default(cuid())
+  role             Role          @default(CHILD)
+  displayName      String
+  pinHash          String?
+  passwordHash     String?
+  email            String?       @unique
+  classroomId      String?
+  classroom        Classroom?    @relation("ClassroomStudents", fields: [classroomId], references: [id])
+  taughtClassrooms Classroom[]   @relation("ClassroomTeacher")
+  createdAt        DateTime      @default(now())
+  sessions         GameSession[]
+
+  @@index([classroomId])
+}
+
+model Classroom {
+  id        String   @id @default(cuid())
+  name      String
+  code      String   @unique
+  teacherId String
+  teacher   User     @relation("ClassroomTeacher", fields: [teacherId], references: [id])
+  students  User[]   @relation("ClassroomStudents")
+  createdAt DateTime @default(now())
+
+  @@index([teacherId])
 }
 
 model Level {

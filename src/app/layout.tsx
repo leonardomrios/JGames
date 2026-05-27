@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fredoka, Nunito } from "next/font/google";
+import { SessionProvider } from "@/components/providers/SessionProvider";
 import "./globals.css";
 
 const fredoka = Fredoka({
@@ -25,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${fredoka.variable} ${nunito.variable} h-full`}>
       <body className="min-h-full flex flex-col font-body bg-cream text-ink antialiased">
-        {children}
+        <SessionProvider>{children}</SessionProvider>
       </body>
     </html>
   );
