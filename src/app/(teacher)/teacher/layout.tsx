@@ -30,6 +30,12 @@ export default async function TeacherLayout({
                 Dashboard
               </Link>
               <Link
+                href="/teacher/levels"
+                className="font-display text-ink/60 hover:text-ink transition-colors"
+              >
+                Niveles
+              </Link>
+              <Link
                 href="/play"
                 className="font-display text-ink/60 hover:text-ink transition-colors"
               >
