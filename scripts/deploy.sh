@@ -10,13 +10,11 @@ if [ ! -f .env.production ]; then
   exit 1
 fi
 
-export $(grep -v '^#' .env.production | xargs)
-
 echo "Construyendo contenedores..."
-docker compose -f docker-compose.production.yml build
+docker compose --env-file .env.production -f docker-compose.production.yml build
 
 echo "Levantando servicios..."
-docker compose -f docker-compose.production.yml up -d
+docker compose --env-file .env.production -f docker-compose.production.yml up -d
 
 echo ""
 echo "Deploy completado"
